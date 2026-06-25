@@ -1,0 +1,32 @@
+# 1. 忽略所有文件和文件夹
+*
+
+# 2. 必须放行 .gitignore 本身，否则它也不会被提交
+!.gitignore
+
+# 3. 放行 Deep-MIST 这个文件夹本身（极其重要，否则进不去）
+!Deep-MIST/
+
+# 4. 选择性放行 Deep-MIST 里面的内容
+
+
+
+# 方式 B：放行 Deep-MIST 下的某个子文件夹及其内部所有文件
+!Deep-MIST/configs/
+!Deep-MIST/configs/*
+
+!Deep-MIST/deepmist/
+!Deep-MIST/deepmist/**
+
+# --- 新增：重新拉黑特定文件夹 ---
+# 1. 如果只拉黑这一个特定文件夹：
+Deep-MIST/deepmist/CSHD_SIZE_visual/
+
+# 2. （强烈推荐）如果你想把截图里所有以 CSHD_SIZE_visual 开头的文件夹全部拉黑：
+Deep-MIST/deepmist/CSHD_SIZE_visual*/
+
+# 3. 顺手把 Python 的缓存也拉黑了（工程好习惯）：
+Deep-MIST/deepmist/**/__pycache__/
+
+# 4. 只放行 Deep-MIST 根目录下的 py 文件，不进入任何子文件夹
+!Deep-MIST/*.py
