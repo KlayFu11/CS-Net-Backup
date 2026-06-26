@@ -1,15 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
-
-sys.path.append('../')
-from thop import clever_format, profile
-from model.dcn.modules.deform_conv import DeformConv
-from model.Motion import *
-from model.ObjectQuery import *
-import os
+from deepmist.models.multiframe.DQAligner_MIRSTD.model.dcn.modules.deform_conv import DeformConv
+from deepmist.models.multiframe.DQAligner_MIRSTD.model.Motion import *
+from deepmist.models.multiframe.DQAligner_MIRSTD.model.ObjectQuery import *
 from torch.nn import init
-
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 
 class ChannelAttention(nn.Module):
@@ -380,7 +373,7 @@ class DFDAasoffset(nn.Module):
 
 
 class DQAligner(nn.Module):
-    def __init__(self, input_channels, num_frames=5, block=ResNet, act='relu', train_mode=False,
+    def __init__(self, input_channels=3, num_frames=5, block=ResNet, act='relu', train_mode=False,
                  key_mode='last'):  # , wtblock=wtResNet
         super().__init__()
         self.key_mode = key_mode
@@ -423,7 +416,7 @@ class DQAligner(nn.Module):
         self.final = nn.Conv2d(3, 1, 3, 1, 1)
         self.temporal_attn = TemporalAttention(param_channels[0], reduction=8)
 
-    def forward(self, x, feat_prop, cat_flag, ds_flag):
+    def forward(self, x, feat_prop=None, cat_flag=0, ds_flag=False):
         out_l1, out_l2, out_l3, out_4 = self.feat_extract(x)
         out_l1, out_l2, out_l3 = self.multi_att([out_l1, out_l2, out_l3])
         track_loss, obj_query = self.object_query(out_l1)
@@ -503,9 +496,13 @@ class TemporalAttention(nn.Module):
 
 
 if __name__ == '__main__':
-    model = DQAligner(input_channels=1, num_frames=5, train_mode=True, key_mode='last').cuda()
-    dummy_input = torch.randn(1, 1, 5, 512, 512).cuda()
-    tag = False
-    flops, params = profile(model, (dummy_input, None, 0, False), verbose=False)
-    print('FLOPs = ' + str(flops / 1000 ** 3) + ' G')
-    print('Params = ' + str(params / 1000 ** 2) + ' M')
+    from thop import clever_format, profile
+
+    model = DQAligner().cuda()
+    inputs = torch.randn((1, 3, 5, 384, 384)).cuda()  # Params = 0.57M FLOPs = 10.14G
+    flops, params = profile(model, (inputs,))
+    print('Params = ' + str(round(params / 1000 ** 2, 2)) + 'M')
+    print('FLOPs = ' + str(round(flops / 1000 ** 3, 2)) + 'G')
+    flops, params = clever_format([flops, params], '%.6f')
+    print('Params = ' + params)
+    print('FLOPs = ' + flops)

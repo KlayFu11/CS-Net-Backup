@@ -9,9 +9,9 @@ from torch import nn
 from torch.nn import init
 from torch.nn.modules.utils import _pair
 
-from model.dcn.functions.deform_conv_func import DeformConvFunction
+from deepmist.models.multiframe.DQAligner_MIRSTD.model.dcn.functions.deform_conv_func import DeformConvFunction
 
-from model.dcn.modules.modulated_deform_conv import ModulatedDeformConvFunction
+from deepmist.models.multiframe.DQAligner_MIRSTD.model.dcn.modules.modulated_deform_conv import ModulatedDeformConvFunction
 
 class ConvOffset2d(nn.Module):
 

@@ -114,6 +114,9 @@ def build_model(model_cfg):
         model = STDBNet(**model_cfg)
     elif model_name == 'LS_STDNet':
         model = LS_STDNet(**model_cfg)
+    elif model_name == 'DQAligner':
+        from deepmist.models.multiframe.DQAligner_MIRSTD.model.DQAligner import DQAligner
+        model = DQAligner(**model_cfg)
     elif model_name == 'DeepPro':
         model = DeepPro(**model_cfg)
     # Ablation Study
@@ -163,6 +166,9 @@ def run_model(model, model_name, use_sufficiency_loss, use_edge_loss, frames):
             return preds, pred_z_list, pred_v_list
         else:
             preds = model(frames)
+    elif model_name in ['DQAligner']:
+        outputs = model(frames, None, 0, False)
+        preds = outputs[1].squeeze(2)
     elif model_name in [ 'ResUNet_DTUM_vis_feat']:#'MISTNet_vis_feat', 'MISTNet_wo_MFB_Ls_vis_feat',
         preds, z_4, z_3, z_2, z_1 = model(frames)
         return preds, z_4, z_3, z_2, z_1

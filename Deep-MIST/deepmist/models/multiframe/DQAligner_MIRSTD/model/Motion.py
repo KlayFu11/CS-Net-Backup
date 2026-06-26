@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from model.dcn.modules.deform_conv import DeformConv
+from deepmist.models.multiframe.DQAligner_MIRSTD.model.dcn.modules.deform_conv import DeformConv
 import math
 from einops import rearrange
 import numbers

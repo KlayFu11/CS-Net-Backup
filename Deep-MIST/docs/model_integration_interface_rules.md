@@ -428,7 +428,7 @@ DeepPro 当前目录里保留了原始 `train.py`、`test.py`、`data_utils`、`
 
 后续外部模型必须使用 Deep-MIST 当前统一训练 / 测试 / 评价体系：
 
-- 使用 `train_loss1.py` 训练。
+- 使用用户指定的当前训练入口训练，例如 `train_loss1.py`；该入口通过 config 中的 `model.optimizer`、`model.loss`、`model.lr_scheduler` 接入 optimizer、loss 和 scheduler。
 - 使用 `test.py` 测试。
 - 使用 `deepmist/datasets` 当前数据输出。
 - 使用 `deepmist/losses` 当前 loss 构建机制。
@@ -482,20 +482,180 @@ Test smoke check: passed / failed / not run
 
 ## 15. 后续接入新模型的标准流程
 
+后续接入任何新模型时，必须按下面顺序实现和验证。不能跳过前置步骤直接改训练或测试入口。
+
 1. 审计外部模型，判断单帧 / 多帧 / 不确定。
-2. 找到外部仓库真正的网络主 class 和 forward 必需依赖。
-3. 在当前 conda 环境中独立跑通 import、instantiate、forward、FLOPs、Params。
-4. 记录输入 shape、输出类型、最终 prediction 选择规则。
-5. 在 Deep-MIST 内新增最小模型文件或 wrapper。
-6. 在 `deepmist/models/__init__.py` 添加显式 import。
-7. 在 `build_model()` 添加模型名分支。
-8. 在 `run_model()` 添加输入输出适配分支，保持最终输出 `[B, 1, H, W]` 或当前 loss 支持的预测列表。
-9. 生成或复制最小 config，只改模型选择和模型构造必要参数。
-10. 运行 import / instantiate / standalone forward / registry / config loading 检查。
-11. 可行时运行 one-batch train smoke 和 test smoke。
+2. 找到外部仓库真正的网络主 class 和 forward 必需依赖，只迁移最小网络代码。
+3. 先解决模型自身的库包依赖，优先复用当前 conda 环境已有依赖；确需新增依赖时，先说明原因、影响范围和替代方案，不得为了 dataset、logger、config、metric 或训练脚本引入外部工程依赖。
+4. 在当前 conda 环境中先让模型文件自身可以 import 和 instantiate。
+5. 在模型文件自身的最小测试中跑通 forward / FLOPs / Params。多帧模型可参考以下模板，但 `NewModel(...)` 和 input shape 必须按目标模型真实接口调整：
+
+```python
+if __name__ == '__main__':
+    model = NewModel(...).cuda()
+    inputs = torch.randn((1, 3, 5, 384, 384)).cuda()
+    flops, params = profile(model, (inputs,))
+    print('Params = ' + str(round(params / 1000 ** 2, 2)) + 'M')
+    print('FLOPs = ' + str(round(flops / 1000 ** 3, 2)) + 'G')
+    flops, params = clever_format([flops, params], '%.6f')
+    print('Params = ' + params)
+    print('FLOPs = ' + flops)
+```
+
+6. 记录模型自身测试的输入 shape、输出类型、输出 shape，以及 tuple / list / dict 中最终用于训练的 prediction。
+7. 在 Deep-MIST 内新增最小模型文件或 wrapper，使模型最终适配当前 pipeline 的输入输出合约。
+8. 注册到 `deepmist/models/__init__.py`：添加显式 import，在 `build_model()` 添加模型名分支，在 `run_model()` 添加该模型的输入输出适配分支。
+9. 生成或复制对应数据集的最小 config，只改 `model.network.name` 和目标模型构造函数真正需要的参数；optimizer、loss、scheduler、dataset、epoch、batch size、input size 等公平对比字段默认沿用对应数据集的现有配置。
+10. 先确认模型能够被 `train_loss1.py` 通过对应 config 加载，并使用 config 中的 `model.optimizer`、`model.loss`、`model.lr_scheduler` 开始训练入口的 smoke check。该阶段只验证训练入口能接上模型，不代表正式训练完成。
+11. 训练入口接通后，最后再考虑 `test.py` 接入：确认 checkpoint 加载、`run_model()` 输出、`preds[0]`、metric 和可视化路径都与当前测试合约一致。
 12. 汇报所有改动、验证结果、未确认问题，不声称未运行的正式指标。
 
-## 16. 仍需人工确认的问题
+## 16. DQAligner 接入 train_loss1.py 的复用节点
+
+本节记录一次实际把 DQAligner 接入 `train_loss1.py` 时暴露出的关键节点和取舍。后续接入新模型时，应优先按这些节点检查，不要直接改训练循环。
+
+### 16.1 主训练入口优先走 registry
+
+`train_loss1.py` 已经通过以下入口调用模型和 loss：
+
+```python
+from deepmist.losses import build_loss
+from deepmist.models import build_model, run_model
+```
+
+因此，新增模型或 loss 时优先修改 registry：
+
+- 模型接入 `deepmist/models/__init__.py` 的 `build_model()` 和 `run_model()`。
+- loss 接入 `deepmist/losses/__init__.py` 的 `choose_loss()`。
+- config 通过 `model.network.name` 和 `model.loss.loss_x.type` 选择模型与 loss。
+
+除非 registry 机制无法覆盖，否则不要在 `train_loss1.py` 中直接 import 新模型或新 loss。这样可以避免所有训练任务启动时都提前加载某个模型的重依赖、CUDA 扩展或外部包。
+
+### 16.2 模型注册不是只加 build_model 分支
+
+多帧模型接入时必须同时处理两层接口：
+
+1. `build_model()`：根据 `model.network.name` 实例化模型。
+2. `run_model()`：把该模型真实 `forward()` 输出转换成当前训练循环可消费的预测。
+
+以 DQAligner 为例，外部模型 `forward()` 返回四元组：
+
+```python
+return [], output, feat_prop, track_loss
+```
+
+原训练代码实际用于 loss 的是第二个输出，并去掉时间维：
+
+```python
+outputs = model(frames, None, 0, False)
+preds = outputs[1].squeeze(2)
+```
+
+接入 Deep-MIST 时，应在 `run_model()` 的 `DQAligner` 分支中完成这个适配，使最终输出保持：
+
+```text
+[B, 1, H, W]
+```
+
+不能为了适配一个模型修改 `train_loss1.py` 的 batch 解包、loss 计算或 metric 逻辑。
+
+### 16.3 原始模型代码要清理 import 副作用
+
+外部论文代码常见独立工程写法包括：
+
+- `from model.xxx import ...`
+- `sys.path.append(...)`
+- import 阶段执行 `os.environ['CUDA_VISIBLE_DEVICES'] = '0'`
+- 顶层 import `thop`、可视化包或只在 `__main__` 测 FLOPs 时才需要的工具
+
+接入当前仓库时，应改成 Deep-MIST package 路径，并去掉 import 阶段副作用。只在独立 FLOPs / Params 测试中使用的依赖，应下沉到：
+
+```python
+if __name__ == '__main__':
+    from thop import clever_format, profile
+```
+
+如果模型依赖编译扩展，例如 DQAligner 的 `DCN2`，接入代码只修 package import，不应顺手编译、安装或改写扩展。验证阶段如实报告扩展是否可用。
+
+### 16.4 外部 loss 接入要最小复制
+
+如果用户明确要求使用外部论文的训练 loss，优先把该 loss 作为 Deep-MIST loss registry 的一个普通 loss 接入，而不是调用外部训练脚本。
+
+以 DQAligner 的 `AdaFocalLoss` 为例：
+
+- 只复制 `AdaFocalLoss` 本体和必要 import。
+- 不复制同一文件中未使用的 `scipy`、`matplotlib`、绘图函数、其他 loss 或调试代码。
+- 新文件放在 `deepmist/losses/loss_AdaFocal.py`。
+- 在 `deepmist/losses/__init__.py` 中 import 并在 `choose_loss()` 添加 `loss_type == 'AdaFocalLoss'` 分支。
+- config 中使用：
+
+```yaml
+model:
+  loss:
+    num_preds: 1
+    loss_1:
+      type: AdaFocalLoss
+      weight: 1
+```
+
+如果外部 loss 的 `__init__()` 不接收 `smooth`、`reduction` 等参数，config 中必须移除这些字段，否则 `choose_loss()` 会把多余参数传给 loss 构造函数导致报错。
+
+### 16.5 config 字段必须按当前 dataloader 与接口修正
+
+论文或外部训练脚本的参数不能机械照抄，需要先对齐当前 Deep-MIST 的真实数据接口。
+
+DQAligner 原训练脚本中曾使用 `input_channels=1`，但当前 `MISTDataset` 给 `train_loss1.py` 返回 RGB 多帧输入：
+
+```text
+[B, 3, T, H, W]
+```
+
+因此接入 MIST 配置时应把 DQAligner 的 `input_channels` 设为 `3`。这属于模型构造参数对当前 pipeline 的必要适配，不是修改 dataset。
+
+如果论文描述“输入帧 zero-padded 到 512 x 512”，而当前 dataset 只暴露 `img_size` resize 接口，没有显式 zero padding 实现，则 config 中只能通过：
+
+```yaml
+dataset:
+  img_size: [ 512, 512 ]
+```
+
+表达尺寸要求。不要为了复现论文一句预处理描述擅自修改 dataset loader。
+
+### 16.6 验证要区分静态通过和运行时通过
+
+接入完成后至少做两层验证：
+
+静态 / 配置验证：
+
+- YAML 能解析。
+- `model.network.name` 与 `build_model()` 分支一致。
+- `model.loss.loss_x.type` 与 `choose_loss()` 分支一致。
+- `run_model()` 分支中最终输出选择规则明确。
+- `train_loss1.py` 无非必要 diff。
+
+运行时验证：
+
+- `build_loss()` 能构造新 loss。
+- `build_model()` 能构造新模型。
+- dummy 或 one-batch forward 输出 `[B, 1, H, W]`。
+- loss 能接收 `pred, mask` 并返回标量。
+
+如果当前环境缺少 `torch`、`DCN2` 或 CUDA 扩展，只能报告 runtime check 被阻塞，不能把静态检查通过描述成训练可运行。
+
+### 16.7 本次 DQAligner 的关键取舍
+
+本次接入做过的关键取舍如下，后续遇到类似情况优先复用：
+
+- 选择 registry 接入，不在 `train_loss1.py` 直接 import `DQAligner` 或 `AdaFocalLoss`。
+- 选择 lazy import `DQAligner`，避免其他模型训练时也加载 DQAligner 的 DCN 依赖。
+- 选择在 `run_model()` 中取 `outputs[1].squeeze(2)`，保持训练循环只接收最终 logits。
+- 选择只复制 `AdaFocalLoss`，不迁移外部 loss 文件中的其他无关代码。
+- 选择保留用户已经设置的 epoch，不因外部论文参数或历史配置顺手覆盖。
+- 选择把外部模型的 `CUDA_VISIBLE_DEVICES` 顶层设置移除，GPU 选择继续由当前训练入口参数控制。
+- 选择把 `thop` import 下沉到独立测试入口，避免训练 import 阶段依赖 FLOPs 工具。
+- 选择如实记录 runtime 阻塞，例如当前环境缺 `torch` 或模型依赖的 `DCN2` 未编译，而不是伪造 forward 结果。
+
+## 17. 仍需人工确认的问题
 
 以下问题无法仅从本次允许审计的 git 跟踪文件中完全确认：
 

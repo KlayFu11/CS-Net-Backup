@@ -9,7 +9,7 @@ from torch import nn
 from torch.nn import init
 from torch.nn.modules.utils import _pair
 
-from model.dcn.functions.modulated_deform_conv_func import ModulatedDeformConvFunction
+from deepmist.models.multiframe.DQAligner_MIRSTD.model.dcn.functions.modulated_deform_conv_func import ModulatedDeformConvFunction
 
 class ModulatedDeformConv(nn.Module):
 
@@ -110,4 +110,3 @@ class ModulatedDeformConvPack(ModulatedDeformConv):
                                                 self.groups,
                                                 self.deformable_groups,
                                                 self.im2col_step)
-
