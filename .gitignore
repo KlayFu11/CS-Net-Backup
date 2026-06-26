@@ -13,10 +13,12 @@
 
 # 方式 B：放行 Deep-MIST 下的某个子文件夹及其内部所有文件
 !Deep-MIST/configs/
-!Deep-MIST/configs/*
+!Deep-MIST/configs/**
 
 !Deep-MIST/deepmist/
 !Deep-MIST/deepmist/**
+!Deep-MIST/docs/
+!Deep-MIST/docs/**
 
 # --- 新增：重新拉黑特定文件夹 ---
 # 1. 如果只拉黑这一个特定文件夹：
@@ -30,3 +32,4 @@ Deep-MIST/deepmist/**/__pycache__/
 
 # 4. 只放行 Deep-MIST 根目录下的 py 文件，不进入任何子文件夹
 !Deep-MIST/*.py
+!Deep-MIST/*.md
