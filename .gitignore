@@ -17,8 +17,8 @@ Deep-MIST/AGENTS.md
 
 !Deep-MIST/deepmist/
 !Deep-MIST/deepmist/**
-!Deep-MIST/docs/
-!Deep-MIST/docs/**
+# !Deep-MIST/docs/
+# !Deep-MIST/docs/**
 
 # --- 新增：重新拉黑特定文件夹 ---
 # 1. 如果只拉黑这一个特定文件夹：
