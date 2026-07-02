@@ -8,7 +8,7 @@
 !Deep-MIST/
 
 # 4. 选择性放行 Deep-MIST 里面的内容
-
+Deep-MIST/AGENTS.md
 
 
 # 方式 B：放行 Deep-MIST 下的某个子文件夹及其内部所有文件
