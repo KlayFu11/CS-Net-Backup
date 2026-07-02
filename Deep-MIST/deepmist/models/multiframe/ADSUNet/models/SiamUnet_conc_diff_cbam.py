@@ -235,20 +235,38 @@ class SiamUnet_conc_diff_cbam(nn.Module):
 
         return output
 
-    
+
+class ADSUNet(nn.Module):
+    """5-frame adapter for the original two-frame ADSUNet backbone."""
+
+    def __init__(self, input_channels=3, num_frames=5, num_classes=2):
+        super(ADSUNet, self).__init__()
+        self.input_channels = input_channels
+        self.num_frames = num_frames
+        self.backbone = SiamUnet_conc_diff_cbam(input_nbr=input_channels, label_nbr=num_classes)
+
+    def forward(self, x):
+        if x.dim() != 5:
+            raise ValueError('ADSUNet expects input shape (B, C, T, H, W).')
+        if x.size(1) != self.input_channels:
+            raise ValueError('ADSUNet expected %d input channels, got %d.' % (self.input_channels, x.size(1)))
+        if x.size(2) != self.num_frames:
+            raise ValueError('ADSUNet expected %d frames, got %d.' % (self.num_frames, x.size(2)))
+
+        first_frame = x[:, :, 0, :, :]
+        last_frame = x[:, :, -1, :, :]
+        return self.backbone(first_frame, last_frame)[-1]
+
+
 if __name__ == '__main__':
-    # x = torch.rand((3,1,256,256))
-    x1 = torch.rand((1 ,3 ,256, 256))
-    x1 = x1.to('cuda')
+    from thop import clever_format, profile
 
-    x2 = torch.rand((1 ,3 ,256, 256))
-    x2 = x1.to('cuda')
-
-    model = SiamUnet_conc_diff_cbam(input_nbr=3, label_nbr=2)
-    model.to('cuda')
-
-    pytorch_total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print("Total_params: {}".format(pytorch_total_params))
-
-    pred = model(x1, x2)
-    print(pred.shape)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = ADSUNet().to(device)
+    inputs = torch.randn((1, 3, 5, 384, 384), device=device)
+    flops, params = profile(model, (inputs,))
+    print('Params = ' + str(round(params / 1000 ** 2, 2)) + 'M')
+    print('FLOPs = ' + str(round(flops / 1000 ** 3, 2)) + 'G')
+    flops, params = clever_format([flops, params], '%.6f')
+    print('Params = ' + params)
+    print('FLOPs = ' + flops)
