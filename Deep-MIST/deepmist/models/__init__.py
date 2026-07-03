@@ -27,6 +27,7 @@ from deepmist.models.multiframe.RFR_STDNet.model_RFR_STDNet import RFR_STDNet
 from deepmist.models.multiframe.STDQNet.model_STDQNet import STDQNet
 from deepmist.models.multiframe.STDBNet.model_STDBNet import STDBNet
 from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet import LS_STDNet
+from deepmist.models.multiframe.ADSUNet.models.SiamUnet_conc_diff_cbam import ADSUNet
 
 
 # Ablation Study
@@ -116,6 +117,8 @@ def build_model(model_cfg):
         model = LS_STDNet(**model_cfg)
     elif model_name == 'DeepPro':
         model = DeepPro(**model_cfg)
+    elif model_name == 'ADSUNet':
+        model = ADSUNet(**model_cfg)
     # Ablation Study
     # elif model_name == 'MISTNet_wo_MFB_Ls':
     #     model = MISTNet_wo_MFB_Ls(**model_cfg)
@@ -156,6 +159,8 @@ def run_model(model, model_name, use_sufficiency_loss, use_edge_loss, frames):
         preds = model(frames)
     elif model_name in ['RFR']:
         frames = frames.permute(0, 2, 1, 3, 4).contiguous()
+        preds = model(frames)
+    elif model_name in ['ADSUNet']:
         preds = model(frames)
     elif model_name in [ 'STDQNet', 'STDBNet', 'RFR_STDNet', 'LS_STDNet']:#'MISTNet', 'MISTNet_wo_SNCB'
         if use_sufficiency_loss:

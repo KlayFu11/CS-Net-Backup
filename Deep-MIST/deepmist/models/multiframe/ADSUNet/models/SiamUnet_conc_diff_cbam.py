@@ -239,10 +239,13 @@ class SiamUnet_conc_diff_cbam(nn.Module):
 class ADSUNet(nn.Module):
     """5-frame adapter for the original two-frame ADSUNet backbone."""
 
-    def __init__(self, input_channels=3, num_frames=5, num_classes=2):
+    def __init__(self, input_channels=3, num_frames=5, num_classes=2, output_channel=0):
         super(ADSUNet, self).__init__()
+        if output_channel < 0 or output_channel >= num_classes:
+            raise ValueError('ADSUNet output_channel must be in [0, num_classes).')
         self.input_channels = input_channels
         self.num_frames = num_frames
+        self.output_channel = output_channel
         self.backbone = SiamUnet_conc_diff_cbam(input_nbr=input_channels, label_nbr=num_classes)
 
     def forward(self, x):
@@ -255,7 +258,8 @@ class ADSUNet(nn.Module):
 
         first_frame = x[:, :, 0, :, :]
         last_frame = x[:, :, -1, :, :]
-        return self.backbone(first_frame, last_frame)[-1]
+        logits = self.backbone(first_frame, last_frame)[-1]
+        return logits[:, self.output_channel:self.output_channel + 1, :, :]
 
 
 if __name__ == '__main__':
