@@ -8,7 +8,7 @@
 !Deep-MIST/
 
 # 4. 选择性放行 Deep-MIST 里面的内容
-Deep-MIST/AGENTS.md
+
 
 
 # 方式 B：放行 Deep-MIST 下的某个子文件夹及其内部所有文件
@@ -33,3 +33,4 @@ Deep-MIST/deepmist/**/__pycache__/
 # 4. 只放行 Deep-MIST 根目录下的 py 文件，不进入任何子文件夹
 !Deep-MIST/*.py
 !Deep-MIST/*.md
+Deep-MIST/AGENTS.md

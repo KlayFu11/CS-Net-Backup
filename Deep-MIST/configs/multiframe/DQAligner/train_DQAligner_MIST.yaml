@@ -38,9 +38,9 @@ dataset:
 
 train:
   exp_name: DQAligner_MIST_0626
-  batch_size: 2
+  batch_size: 1
   num_workers: 16
-  total_epochs: 60
+  total_epochs: 30
   log_interval: 50
   save_interval: 1
   val_interval: 1
