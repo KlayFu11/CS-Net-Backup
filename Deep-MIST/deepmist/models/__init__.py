@@ -6,6 +6,7 @@ from copy import deepcopy
 from deepmist.models.singleframe.ACM.model_ACM import ASKCResUNet as ACM
 from deepmist.models.singleframe.ALCNet.model_ALCNet import ASKCResNetFPN as ALCNet
 from deepmist.models.singleframe.DNANet.model_DNANet import DNANet
+from deepmist.models.singleframe.DHiF.model_DNANet_DHiF import DNANet_DHiF
 from deepmist.models.singleframe.FC3Net.model_FC3Net import FC3 as FC3Net
 # from deepmist.models.singleframe.ISNet.model_ISNet import ISNet_ours as ISNet
 from deepmist.models.singleframe.UIUNet.model_UIUNet import UIUNet
@@ -77,6 +78,8 @@ def build_model(model_cfg):
         model = ALCNet(**model_cfg)
     elif model_name == 'DNANet':
         model = DNANet(**model_cfg)
+    elif model_name == 'DNANet_DHiF':
+        model = DNANet_DHiF(**model_cfg)
     elif model_name == 'FC3Net':
         model = FC3Net(**model_cfg)
     elif model_name == 'ISNet':
@@ -141,7 +144,7 @@ def build_model(model_cfg):
 
 def run_model(model, model_name, use_sufficiency_loss, use_edge_loss, frames):
     # single-frame
-    if model_name in ['ACM', 'ALCNet', 'DNANet', 'FC3Net', 'UIUNet', 'RDIAN', 'MiM', 'MSHNet', 'MSHNet_DHiF']:
+    if model_name in ['ACM', 'ALCNet', 'DNANet', 'DNANet_DHiF', 'FC3Net', 'UIUNet', 'RDIAN', 'MiM', 'MSHNet', 'MSHNet_DHiF']:
         frames = frames[:, :, -1, :, :]
         preds = model(frames)
     elif model_name in ['ISNet']:
