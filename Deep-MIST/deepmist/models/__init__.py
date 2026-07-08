@@ -12,6 +12,7 @@ from deepmist.models.singleframe.UIUNet.model_UIUNet import UIUNet
 from deepmist.models.singleframe.RDIAN.model_RDIAN import RDIAN
 from deepmist.models.singleframe.MiM.model_MiM import MiM
 from deepmist.models.singleframe.MSHNet.model_MSHNet import MSHNet
+from deepmist.models.singleframe.DHiF.model_MSHNet_DHiF import MSHNet_DHiF
 from deepmist.models.multiframe.DTUM.model_ResUNet_DTUM import ResUNet_DTUM
 from deepmist.models.multiframe.DTUM.model_ALCNet_DTUM import ALCNet_DTUM
 from deepmist.models.multiframe.DTUM.model_DNANet_DTUM import DNANet_DTUM
@@ -88,6 +89,8 @@ def build_model(model_cfg):
         model = MiM(**model_cfg)
     elif model_name == 'MSHNet':
         model = MSHNet(**model_cfg)
+    elif model_name == 'MSHNet_DHiF':
+        model = MSHNet_DHiF(**model_cfg)
     # multi-frame
     elif model_name == 'ResUNet_DTUM':
         model = ResUNet_DTUM(**model_cfg)
@@ -138,7 +141,7 @@ def build_model(model_cfg):
 
 def run_model(model, model_name, use_sufficiency_loss, use_edge_loss, frames):
     # single-frame
-    if model_name in ['ACM', 'ALCNet', 'DNANet', 'FC3Net', 'UIUNet', 'RDIAN', 'MiM', 'MSHNet']:
+    if model_name in ['ACM', 'ALCNet', 'DNANet', 'FC3Net', 'UIUNet', 'RDIAN', 'MiM', 'MSHNet', 'MSHNet_DHiF']:
         frames = frames[:, :, -1, :, :]
         preds = model(frames)
     elif model_name in ['ISNet']:
