@@ -451,7 +451,7 @@ def args_parser():
     parser.add_argument('--seed', type=int, default=0, help='random seed')
     parser.add_argument('--device', type=str, default='cuda', help='device (use cuda or cpu)')
     parser.add_argument('--DataParallel', default=True, help='use DataParallel or not')
-    parser.add_argument('--gpu_ids', type=str, default='1', help='the ids of gpus')
+    parser.add_argument('--gpu_ids', type=str, default='0', help='the ids of gpus')
 
     return parser.parse_args()
 
