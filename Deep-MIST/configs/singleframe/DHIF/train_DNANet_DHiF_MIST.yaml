@@ -40,6 +40,6 @@ train:
   num_workers: 16
   total_epochs: 150
   log_interval: 50
-  save_interval: 50
+  save_interval: 1
   val_interval: 1
   resume:

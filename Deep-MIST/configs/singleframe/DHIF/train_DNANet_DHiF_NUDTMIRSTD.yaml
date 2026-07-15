@@ -28,7 +28,7 @@ dataset:
 
 train:
   exp_name: DNANet_DHiF_NUDTMIRSTD_0708
-  batch_size: 8
+  batch_size: 1
   num_workers: 16
   total_epochs: 150
   log_interval: 50
