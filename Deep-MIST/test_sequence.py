@@ -130,8 +130,9 @@ class SequenceTester(object):
         self.device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
 
         # 自定义序列列表
-        self.seq_list = [3, 7, 12, 13, 15, 16, 20, 24, 35, 37, 38, 40, 43, 46, 49, 55, 66, 75, 76, 77, 80, 83, 84, 86,
-                        90, 91, 93, 95, 96, 104, 105, 108, 110, 116, 117, 121, 122, 124, 125, 133, 134, 138]
+        # self.seq_list = [3, 7, 12, 13, 15, 16, 20, 24, 35, 37, 38, 40, 43, 46, 49, 55, 66, 75, 76, 77, 80, 83, 84, 86,
+        #                 90, 91, 93, 95, 96, 104, 105, 108, 110, 116, 117, 121, 122, 124, 125, 133, 134, 138]
+        self.seq_list = [39]
 
         # 数据集
         self.dataset = CustomMISTDataset(
@@ -343,9 +344,9 @@ def args_parser():
     parser.add_argument('--seed', type=int, default=0, help='random seed')
     parser.add_argument('--device', type=str, default='cuda', help='device (use cuda or cpu)')
     parser.add_argument('--DataParallel', default=True, help='use DataParallel or not')
-    parser.add_argument('--gpu_ids', type=str, default='1', help='the ids of gpus')
+    parser.add_argument('--gpu_ids', type=str, default='3', help='the ids of gpus')
     parser.add_argument('--checkpoint', type=str, 
-                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/MISTNet_MIST_0912_42_78/20251009_182134/checkpoints/model_epoch_48.pth',
+                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/LS_STDNet_MIST_0408_PANLSAGGDecoder_LKP7SKA3ParaLoss/20260412_000735/checkpoints/model_epoch_83.pth',
                         help='path to model checkpoint')
 
     return parser.parse_args()

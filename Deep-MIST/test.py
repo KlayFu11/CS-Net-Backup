@@ -170,8 +170,8 @@ class Tester(object):
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_ids
     tester = Tester(args)
-    #tester.test(split='all')
-    tester.test(split='hard')
+    tester.test(split='all')
+    # tester.test(split='hard')
 
 
 def args_parser():
