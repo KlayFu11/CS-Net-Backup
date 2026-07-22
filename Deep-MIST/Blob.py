@@ -5,25 +5,25 @@ import numpy as np
 plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
 
-# 数据：方法名称，参数量(M)，FLOPS(G)，nIoU(%)
+# 数据：方法名称，参数量(M)，FLOPS(G)，Iou(%)
 methods = [
-    {'name': 'DNANet', 'params': 4.70, 'flops': 32.13, 'niou': 50.25},
-    {'name': 'UIUNet', 'params': 50.54, 'flops': 122.63, 'niou': 48.66},
-    {'name': 'DNANet-DTUM', 'params': 1.21, 'flops': 99.98, 'niou': 51.32},
-    {'name': 'ResUNet-DTUM', 'params': 0.30, 'flops': 23.29, 'niou': 51.33},
-    {'name': 'LMAFormer', 'params': 390.05, 'flops': 279.63, 'niou': 32.12},
-    {'name': 'DNANet-RFR', 'params': 4.80, 'flops': 63.22, 'niou': 63.46},
-    {'name': 'ResUNet-RFR', 'params': 1.01, 'flops': 39.85, 'niou': 64.45},
-    {'name': 'DeepPro', 'params': 0.02, 'flops': 8.47, 'niou': 50.75},
-    {'name': 'MISTNet', 'params': 0.85, 'flops': 19.31, 'niou': 70.48},
-    {'name': 'MS$^2$DNet', 'params': 0.57, 'flops': 10.14, 'niou': 72.32},
+    {'name': 'DNANet-RFR', 'params': 4.80, 'flops': 63.22, 'Iou': 63.46},
+    {'name': 'ResUNet-RFR', 'params': 1.01, 'flops': 39.85, 'Iou': 64.45},
+    {'name': 'DNANet-DTUM', 'params': 1.21, 'flops': 99.98, 'Iou': 51.32},
+    {'name': 'ResUNet-DTUM', 'params': 0.30, 'flops': 23.29, 'Iou': 51.33},
+    {'name': 'LMAFormer', 'params': 390.05, 'flops': 279.63, 'Iou': 32.12},
+    {'name': 'ADSUNet', 'params': 1.57, 'flops': 12.03, 'Iou': 52.84},
+    {'name': 'DQAligner', 'params': 0.55, 'flops': 62.03, 'Iou': 66.05},
+    {'name': 'DeepPro', 'params': 0.02, 'flops': 8.47, 'Iou': 50.75},
+    {'name': 'MISTNet', 'params': 0.85, 'flops': 19.31, 'Iou': 70.48},
+    {'name': 'MS$^2$DNet', 'params': 0.57, 'flops': 10.14, 'Iou': 72.32},
 ]
 
 # 提取数据
 names = [m['name'] for m in methods]
 params = [m['params'] for m in methods]
 flops = [m['flops'] for m in methods]
-niou = [m['niou'] for m in methods]
+Iou = [m['Iou'] for m in methods]
 
 # 颜色映射
 colors = ['#FF8C00', '#F898CB', '#4DAF4A', '#731A73', '#FFE29E', '#0098B2','#3D505A',
@@ -53,7 +53,7 @@ fig, ax = plt.subplots(figsize=(8, 6))
 
 # 绘制气泡
 for i, name in enumerate(names):
-    ax.scatter(mapped_x[i], niou[i],
+    ax.scatter(mapped_x[i], Iou[i],
                s=bubble_sizes[i],
                c=colors[i],
                alpha=0.6,
@@ -61,7 +61,7 @@ for i, name in enumerate(names):
                linewidth=2)
 
 # 设置y轴
-ax.set_ylabel('nIoU (%)', fontsize=14, fontweight='bold')
+ax.set_ylabel('Iou (%)', fontsize=14, fontweight='bold')
 ax.set_ylim(28, 73)
 ax.set_yticks([30, 40, 50, 60, 70])
 ax.set_yticklabels([30, 40, 50, 60, 70], fontsize=12)
@@ -98,7 +98,7 @@ plt.tight_layout()
 
 # 保存图片
 plt.savefig('/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/blob_plot.png', format='png', 
-            dpi=1000, bbox_inches='tight')
+            dpi=2000, bbox_inches='tight')
 print("Bubble plot saved to: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/blob_plot.png")
 
 plt.show()
@@ -115,22 +115,22 @@ plt.show()
 
 # # ====== 数据 ======
 # methods = [
-#     {'name': 'DNANet', 'params': 4.70, 'flops': 32.13, 'niou': 50.25},
-#     {'name': 'UIUNet', 'params': 50.54, 'flops': 122.63, 'niou': 48.66},
-#     {'name': 'DNANet-DTUM', 'params': 1.21, 'flops': 99.98, 'niou': 51.32},
-#     {'name': 'ResUNet-DTUM', 'params': 0.30, 'flops': 23.29, 'niou': 51.33},
-#     {'name': 'LMAFormer', 'params': 390.05, 'flops': 279.63, 'niou': 32.12},
-#     {'name': 'DNANet-RFR', 'params': 4.80, 'flops': 63.22, 'niou': 63.46},
-#     {'name': 'ResUNet-RFR', 'params': 1.01, 'flops': 39.85, 'niou': 64.45},
-#     {'name': 'DeepPro', 'params': 0.02, 'flops': 8.47, 'niou': 50.75},
-#     {'name': 'MISTNet', 'params': 0.85, 'flops': 19.31, 'niou': 70.48},
-#     {'name': 'MS$^2$DNet', 'params': 0.57, 'flops': 10.14, 'niou': 72.32},
+#     {'name': 'DNANet', 'params': 4.70, 'flops': 32.13, 'Iou': 50.25},
+#     {'name': 'UIUNet', 'params': 50.54, 'flops': 122.63, 'Iou': 48.66},
+#     {'name': 'DNANet-DTUM', 'params': 1.21, 'flops': 99.98, 'Iou': 51.32},
+#     {'name': 'ResUNet-DTUM', 'params': 0.30, 'flops': 23.29, 'Iou': 51.33},
+#     {'name': 'LMAFormer', 'params': 390.05, 'flops': 279.63, 'Iou': 32.12},
+#     {'name': 'DNANet-RFR', 'params': 4.80, 'flops': 63.22, 'Iou': 63.46},
+#     {'name': 'ResUNet-RFR', 'params': 1.01, 'flops': 39.85, 'Iou': 64.45},
+#     {'name': 'DeepPro', 'params': 0.02, 'flops': 8.47, 'Iou': 50.75},
+#     {'name': 'MISTNet', 'params': 0.85, 'flops': 19.31, 'Iou': 70.48},
+#     {'name': 'MS$^2$DNet', 'params': 0.57, 'flops': 10.14, 'Iou': 72.32},
 # ]
 
 # names = [m['name'] for m in methods]
 # params = [m['params'] for m in methods]
 # flops = [m['flops'] for m in methods]
-# niou = [m['niou'] for m in methods]
+# Iou = [m['Iou'] for m in methods]
 
 # colors = ['#FF8C00', '#F898CB', '#4DAF4A', '#731A73', '#FFE29E',
 #           '#0098B2', '#3D505A', '#699ECA', '#66C1A4', '#EC3E31']
@@ -154,7 +154,7 @@ plt.show()
 # fig, ax = plt.subplots(figsize=(8, 6))
 
 # for i in range(len(names)):
-#     ax.scatter(mapped_x[i], niou[i],
+#     ax.scatter(mapped_x[i], Iou[i],
 #                s=bubble_sizes[i],
 #                c=colors[i],
 #                alpha=0.7,
@@ -162,7 +162,7 @@ plt.show()
 #                linewidth=1.8)
 
 # # ====== 坐标轴 ======
-# ax.set_ylabel('nIoU (%)', fontsize=12, fontweight='bold')
+# ax.set_ylabel('Iou (%)', fontsize=12, fontweight='bold')
 # ax.set_ylim(28, 73)
 # ax.set_yticks([30, 40, 50, 60, 70])
 
@@ -237,22 +237,22 @@ plt.show()
 
 # # ===== 数据 =====
 # methods = [
-#     {'name': 'DNANet', 'params': 4.70, 'flops': 32.13, 'niou': 50.25},
-#     {'name': 'UIUNet', 'params': 50.54, 'flops': 122.63, 'niou': 48.66},
-#     {'name': 'DNANet-DTUM', 'params': 1.21, 'flops': 99.98, 'niou': 51.32},
-#     {'name': 'ResUNet-DTUM', 'params': 0.30, 'flops': 23.29, 'niou': 51.33},
-#     {'name': 'LMAFormer', 'params': 390.05, 'flops': 279.63, 'niou': 32.12},
-#     {'name': 'DNANet-RFR', 'params': 4.80, 'flops': 63.22, 'niou': 63.46},
-#     {'name': 'ResUNet-RFR', 'params': 1.01, 'flops': 39.85, 'niou': 64.45},
-#     {'name': 'DeepPro', 'params': 0.02, 'flops': 8.47, 'niou': 50.75},
-#     {'name': 'MISTNet', 'params': 0.85, 'flops': 19.31, 'niou': 70.48},
-#     {'name': 'MS$^2$DNet', 'params': 0.57, 'flops': 10.14, 'niou': 72.32},
+#     {'name': 'DNANet', 'params': 4.70, 'flops': 32.13, 'Iou': 50.25},
+#     {'name': 'UIUNet', 'params': 50.54, 'flops': 122.63, 'Iou': 48.66},
+#     {'name': 'DNANet-DTUM', 'params': 1.21, 'flops': 99.98, 'Iou': 51.32},
+#     {'name': 'ResUNet-DTUM', 'params': 0.30, 'flops': 23.29, 'Iou': 51.33},
+#     {'name': 'LMAFormer', 'params': 390.05, 'flops': 279.63, 'Iou': 32.12},
+#     {'name': 'DNANet-RFR', 'params': 4.80, 'flops': 63.22, 'Iou': 63.46},
+#     {'name': 'ResUNet-RFR', 'params': 1.01, 'flops': 39.85, 'Iou': 64.45},
+#     {'name': 'DeepPro', 'params': 0.02, 'flops': 8.47, 'Iou': 50.75},
+#     {'name': 'MISTNet', 'params': 0.85, 'flops': 19.31, 'Iou': 70.48},
+#     {'name': 'MS$^2$DNet', 'params': 0.57, 'flops': 10.14, 'Iou': 72.32},
 # ]
 
 # names = [m['name'] for m in methods]
 # params = [m['params'] for m in methods]
 # flops = [m['flops'] for m in methods]
-# niou = [m['niou'] for m in methods]
+# Iou = [m['Iou'] for m in methods]
 
 # colors = ['#FF8C00', '#F898CB', '#4DAF4A', '#731A73', '#FFE29E',
 #           '#0098B2','#3D505A', '#699ECA','#66C1A4','#EC3E31']
@@ -277,7 +277,7 @@ plt.show()
 
 # # ===== 绘制 =====
 # for i in range(len(names)):
-#     ax.scatter(mapped_x[i], niou[i],
+#     ax.scatter(mapped_x[i], Iou[i],
 #                s=bubble_sizes[i],
 #                c=colors[i],
 #                alpha=0.7,
@@ -285,7 +285,7 @@ plt.show()
 #                linewidth=1.5)
 
 # # ===== 坐标轴 =====
-# ax.set_ylabel('nIoU (%)', fontsize=12, fontweight='bold')
+# ax.set_ylabel('Iou (%)', fontsize=12, fontweight='bold')
 # ax.set_ylim(28, 73)
 # ax.set_yticks([30, 40, 50, 60, 70])
 

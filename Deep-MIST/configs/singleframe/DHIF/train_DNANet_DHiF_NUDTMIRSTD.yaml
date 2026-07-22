@@ -5,7 +5,7 @@ model:
     deep_supervision: True
   optimizer:
     type: Adam
-    init_lr: !!float 5e-4
+    init_lr: !!float 1e-3
   lr_scheduler:
     warmup_iters: -1
     scheduler:
@@ -28,7 +28,7 @@ dataset:
 
 train:
   exp_name: DNANet_DHiF_NUDTMIRSTD_0708
-  batch_size: 1
+  batch_size: 2
   num_workers: 16
   total_epochs: 150
   log_interval: 50

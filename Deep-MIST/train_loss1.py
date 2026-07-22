@@ -446,7 +446,7 @@ def main(args):
 def args_parser():
     parser = argparse.ArgumentParser(description='PyTorch Deep-MIST Training')
     parser.add_argument('--config', type=str,
-                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/configs/singleframe/DHIF/train_DNANet_DHiF_MIST.yaml',
+                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/configs/singleframe/DHIF/train_DNANet_DHiF_NUDTMIRSTD.yaml',
                         help='path to config file')
     parser.add_argument('--seed', type=int, default=0, help='random seed')
     parser.add_argument('--device', type=str, default='cuda', help='device (use cuda or cpu)')
