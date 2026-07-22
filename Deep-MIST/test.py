@@ -170,19 +170,19 @@ class Tester(object):
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_ids
     tester = Tester(args)
-    #tester.test(split='all')
-    tester.test(split='hard')
+    tester.test(split='all')
+    #tester.test(split='hard')
 
 
 def args_parser():
     parser = argparse.ArgumentParser(description='PyTorch Deep-MIST Test')
     parser.add_argument('--config', type=str,
-                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/configs/singleframe/DHIF/test_DNANet_DHiF_MIST.yaml',
+                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/configs/singleframe/DHIF/test_MSHNet_DHiF_MIST.yaml',
                         help='path to config file')
     parser.add_argument('--seed', type=int, default=0, help='random seed')
     parser.add_argument('--device', type=str, default='cuda', help='device (use cuda or cpu)')
     parser.add_argument('--DataParallel', default=True, help='use DataParallel or not')
-    parser.add_argument('--gpu_ids', type=str, default='3', help='the ids of gpus')
+    parser.add_argument('--gpu_ids', type=str, default='2', help='the ids of gpus')
 
     return parser.parse_args()
 

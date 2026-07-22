@@ -18,6 +18,6 @@ dataset:
     random_peper: False
 
 test:
-  exp_root: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/DNANet_DHiF_MIST_0708/20260715_004208
+  exp_root: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/DNANet_DHiF_MIST_0708/20260709_230454
   num_workers: 16
   checkpoint: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/DNANet_DHiF_MIST_0708/20260715_004208/checkpoints/model_epoch_10.pth

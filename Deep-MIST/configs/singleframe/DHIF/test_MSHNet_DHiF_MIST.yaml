@@ -17,6 +17,6 @@ dataset:
     random_peper: False
 
 test:
-  exp_root: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/MSHNet_DHiF_MIST_0703/20260703_131605
+  exp_root: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/MSHNet_DHiF_MIST_0703/20260703_131605/tb_log
   num_workers: 16
   checkpoint: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/MSHNet_DHiF_MIST_0703/20260703_131605/checkpoints/model_epoch_150.pth

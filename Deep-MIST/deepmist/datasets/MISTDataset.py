@@ -19,7 +19,7 @@ class MISTDataset(Data.Dataset):
                         123, 126, 128, 129, 132, 136, 139, 140]
         elif split == 'val_all':
             # 42 sequences
-            #seq_list = [57]
+            # seq_list = [57]
             #seq_list = [15, 16, 46, 75, 83, 84, 86, 90, 93, 96]
             #seq_list = [104, 105, 110]
             #seq_list = [3, 7, 12, 15, 20, 24, 35, 37, 43, 46, 76, 77, 83, 84, 86, 93, 108, 116, 17, 124, 133, 134] # speed test 5~7
