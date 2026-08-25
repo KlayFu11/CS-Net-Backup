@@ -28,7 +28,20 @@ from deepmist.models.multiframe.DeepPro.model_DeepPro import DeepPro
 from deepmist.models.multiframe.RFR_STDNet.model_RFR_STDNet import RFR_STDNet
 from deepmist.models.multiframe.STDQNet.model_STDQNet import STDQNet
 from deepmist.models.multiframe.STDBNet.model_STDBNet import STDBNet
-from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet import LS_STDNet
+#Ablation Study
+# from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet import LS_STDNet
+# from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet_Ablation_lkp import LS_STDNet
+# from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet_Ablation_MSAMconcat import LS_STDNet
+# from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet_Ablation_ska import LS_STDNet
+from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet_Ablation_MSAMwoCSHD import LS_STDNet
+# from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet_Ablation_MSAMwolkp import LS_STDNet
+# from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet_Ablation_MSAMwoska import LS_STDNet
+# from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet_Ablation_MSAM_Involution import LS_STDNet
+
+
+
+
+
 
 
 # Ablation Study
