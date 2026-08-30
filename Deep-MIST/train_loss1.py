@@ -434,7 +434,7 @@ def main(args):
         if epoch % trainer.save_interval == 0:
             trainer.save_model(epoch)
         # val
-        if epoch >= 30 and epoch % trainer.val_interval == 0:  # for MIST
+        if epoch >= 20 and epoch % trainer.val_interval == 0:  # for MIST
             # if epoch >= 10 and epoch % trainer.val_interval == 0:  # for NUDT-MIRSDT
             trainer.validate(epoch, split='all')
             # trainer.validate(epoch, split='hard')
@@ -446,12 +446,12 @@ def main(args):
 def args_parser():
     parser = argparse.ArgumentParser(description='PyTorch Deep-MIST Training')
     parser.add_argument('--config', type=str,
-                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/configs/multiframe/LS_STDNet/train_LS_STDNet_MSIT_PANDecoder.yaml',
+                        default='/home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/configs/singleframe/NSFPN/train_NSFPN_MIST.yaml',
                         help='path to config file')
     parser.add_argument('--seed', type=int, default=0, help='random seed')
     parser.add_argument('--device', type=str, default='cuda', help='device (use cuda or cpu)')
     parser.add_argument('--DataParallel', default=True, help='use DataParallel or not')
-    parser.add_argument('--gpu_ids', type=str, default='5', help='the ids of gpus')
+    parser.add_argument('--gpu_ids', type=str, default='4', help='the ids of gpus')
 
     return parser.parse_args()
 

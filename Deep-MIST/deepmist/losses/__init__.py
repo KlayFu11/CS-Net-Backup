@@ -3,6 +3,7 @@ from deepmist.losses.loss_basic import SoftIoULoss, MultiSoftIoULoss, DiceLoss, 
 from deepmist.losses.loss_sufficiency import SufficiencyLoss
 from deepmist.losses.loss_edge import EdgeLoss
 from deepmist.losses.loss_sls_iou_sdm import SLSIoULoss, SDMLoss
+from deepmist.losses.loss_tsinet import MTWHLoss
 
 
 
@@ -80,7 +81,9 @@ def choose_loss(sub_loss_cfg):
         criterion = SLSIoULoss(**sub_loss_cfg)
     elif loss_type == 'SDMLoss':
         criterion = SDMLoss(**sub_loss_cfg)
+    elif loss_type == 'MTWHLoss':
+        criterion = MTWHLoss(**sub_loss_cfg)
     else:
         raise NotImplementedError(
-            f"Invalid loss type '{loss_type}'. Only SoftIoULoss, DiceLoss, BceLoss, L1Loss, SufficiencyLoss, EdgeLoss, SLSIoULoss, and SDMLoss are supported.")
+            f"Invalid loss type '{loss_type}'. Only SoftIoULoss, DiceLoss, BceLoss, L1Loss, SufficiencyLoss, EdgeLoss, SLSIoULoss, SDMLoss and MTWHLoss are supported.")
     return criterion

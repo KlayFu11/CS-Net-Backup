@@ -1,6 +1,7 @@
 import math
 import torch
 import torch.nn as nn
+from importlib import import_module
 from timm.models.layers import trunc_normal_
 from copy import deepcopy
 from deepmist.models.singleframe.ACM.model_ACM import ASKCResUNet as ACM
@@ -12,6 +13,9 @@ from deepmist.models.singleframe.UIUNet.model_UIUNet import UIUNet
 from deepmist.models.singleframe.RDIAN.model_RDIAN import RDIAN
 from deepmist.models.singleframe.MiM.model_MiM import MiM
 from deepmist.models.singleframe.MSHNet.model_MSHNet import MSHNet
+NSFPN = import_module(
+    'deepmist.models.singleframe.NS-FPN.model.MSHNet_NSFPN'
+).MSHNet_NSFPN
 from deepmist.models.multiframe.DTUM.model_ResUNet_DTUM import ResUNet_DTUM
 from deepmist.models.multiframe.DTUM.model_ALCNet_DTUM import ALCNet_DTUM
 from deepmist.models.multiframe.DTUM.model_DNANet_DTUM import DNANet_DTUM
@@ -27,6 +31,7 @@ from deepmist.models.multiframe.RFR_STDNet.model_RFR_STDNet import RFR_STDNet
 from deepmist.models.multiframe.STDQNet.model_STDQNet import STDQNet
 from deepmist.models.multiframe.STDBNet.model_STDBNet import STDBNet
 from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet import LS_STDNet
+from deepmist.models.multiframe.TSINet.models.TSINet import TSINet
 
 
 # Ablation Study
@@ -88,6 +93,8 @@ def build_model(model_cfg):
         model = MiM(**model_cfg)
     elif model_name == 'MSHNet':
         model = MSHNet(**model_cfg)
+    elif model_name == 'NSFPN':
+        model = NSFPN(**model_cfg)
     # multi-frame
     elif model_name == 'ResUNet_DTUM':
         model = ResUNet_DTUM(**model_cfg)
@@ -114,6 +121,8 @@ def build_model(model_cfg):
         model = STDBNet(**model_cfg)
     elif model_name == 'LS_STDNet':
         model = LS_STDNet(**model_cfg)
+    elif model_name == 'TSINet':
+        model = TSINet(**model_cfg)
     elif model_name == 'DeepPro':
         model = DeepPro(**model_cfg)
     # Ablation Study
@@ -138,7 +147,7 @@ def build_model(model_cfg):
 
 def run_model(model, model_name, use_sufficiency_loss, use_edge_loss, frames):
     # single-frame
-    if model_name in ['ACM', 'ALCNet', 'DNANet', 'FC3Net', 'UIUNet', 'RDIAN', 'MiM', 'MSHNet']:
+    if model_name in ['ACM', 'ALCNet', 'DNANet', 'FC3Net', 'UIUNet', 'RDIAN', 'MiM', 'MSHNet', 'NSFPN']:
         frames = frames[:, :, -1, :, :]
         preds = model(frames)
     elif model_name in ['ISNet']:
@@ -152,7 +161,7 @@ def run_model(model, model_name, use_sufficiency_loss, use_edge_loss, frames):
     elif model_name in ['ResUNet_DTUM', 'ALCNet_DTUM', 'DNANet_DTUM', 'UIUNet_DTUM']:
         preds = model(frames)
         preds = torch.squeeze(preds, 2)
-    elif model_name in ['PSTFNet', 'LVNet', 'MISTNet_wo_MFB_Ls']:
+    elif model_name in ['PSTFNet', 'LVNet', 'MISTNet_wo_MFB_Ls', 'TSINet']:
         preds = model(frames)
     elif model_name in ['RFR']:
         frames = frames.permute(0, 2, 1, 3, 4).contiguous()

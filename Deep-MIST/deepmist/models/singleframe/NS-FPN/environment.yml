@@ -1,0 +1,16 @@
+name: nsfpn
+
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pytorch=2.1.2
+  - numpy=1.24.4
+  - matplotlib=3.10.8
+  - scikit-image=0.25.2
+  - pip
+  - pip:
+      - pytorch-wavelets==1.3.0
