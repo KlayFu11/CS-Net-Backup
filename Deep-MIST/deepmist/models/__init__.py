@@ -13,9 +13,12 @@ from deepmist.models.singleframe.UIUNet.model_UIUNet import UIUNet
 from deepmist.models.singleframe.RDIAN.model_RDIAN import RDIAN
 from deepmist.models.singleframe.MiM.model_MiM import MiM
 from deepmist.models.singleframe.MSHNet.model_MSHNet import MSHNet
-NSFPN = import_module(
-    'deepmist.models.singleframe.NS-FPN.model.MSHNet_NSFPN'
-).MSHNet_NSFPN
+try:
+    NSFPN = import_module(
+        'deepmist.models.singleframe.NS-FPN.model.MSHNet_NSFPN'
+    ).MSHNet_NSFPN
+except (ImportError, ModuleNotFoundError) as _e:
+    NSFPN = None
 from deepmist.models.multiframe.DTUM.model_ResUNet_DTUM import ResUNet_DTUM
 from deepmist.models.multiframe.DTUM.model_ALCNet_DTUM import ALCNet_DTUM
 from deepmist.models.multiframe.DTUM.model_DNANet_DTUM import DNANet_DTUM
@@ -32,6 +35,7 @@ from deepmist.models.multiframe.STDQNet.model_STDQNet import STDQNet
 from deepmist.models.multiframe.STDBNet.model_STDBNet import STDBNet
 from deepmist.models.multiframe.LS_STDNet.model_LS_STDNet import LS_STDNet
 from deepmist.models.multiframe.TSINet.models.TSINet import TSINet
+from deepmist.models.multiframe.DCPNet.deepmist.models.multiframe.DCPNet.model_DCPNet import DCPNet
 
 
 # Ablation Study
@@ -94,6 +98,11 @@ def build_model(model_cfg):
     elif model_name == 'MSHNet':
         model = MSHNet(**model_cfg)
     elif model_name == 'NSFPN':
+        if NSFPN is None:
+            raise ImportError(
+                "NSFPN requires 'pytorch_wavelets' (pip install pytorch_wavelets). "
+                "Or comment out NSFPN if you only train DCPNet."
+            )
         model = NSFPN(**model_cfg)
     # multi-frame
     elif model_name == 'ResUNet_DTUM':
@@ -125,6 +134,8 @@ def build_model(model_cfg):
         model = TSINet(**model_cfg)
     elif model_name == 'DeepPro':
         model = DeepPro(**model_cfg)
+    elif model_name == 'DCPNet':
+        model = DCPNet(**model_cfg)
     # Ablation Study
     # elif model_name == 'MISTNet_wo_MFB_Ls':
     #     model = MISTNet_wo_MFB_Ls(**model_cfg)
@@ -161,7 +172,7 @@ def run_model(model, model_name, use_sufficiency_loss, use_edge_loss, frames):
     elif model_name in ['ResUNet_DTUM', 'ALCNet_DTUM', 'DNANet_DTUM', 'UIUNet_DTUM']:
         preds = model(frames)
         preds = torch.squeeze(preds, 2)
-    elif model_name in ['PSTFNet', 'LVNet', 'MISTNet_wo_MFB_Ls', 'TSINet']:
+    elif model_name in ['PSTFNet', 'LVNet', 'MISTNet_wo_MFB_Ls', 'TSINet', 'DCPNet']:
         preds = model(frames)
     elif model_name in ['RFR']:
         frames = frames.permute(0, 2, 1, 3, 4).contiguous()

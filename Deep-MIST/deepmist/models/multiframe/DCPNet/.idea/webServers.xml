@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="fa1aca83-bd1a-4abc-b748-7f98797905f9" name="1">
+        <fileTransfer rootFolder="/media/Data1/gr/Deep-MIST" accessType="SFTP" host="58.199.160.12" port="22" sshConfigId="187cc291-b863-4552-aa86-55d646e6d641" sshConfig="estar@58.199.160.12:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
