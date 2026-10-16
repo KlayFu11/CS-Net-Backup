@@ -22,6 +22,6 @@ dataset:
     random_peper: False
 
 test:
-  exp_root: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/DCPNet_MIST/20260916_170358
+  exp_root: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/DCPNet_MIST/20260916_165824
   num_workers: 16
-  checkpoint: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/DCPNet_MIST/20260916_170358/checkpoints/model_epoch_31.pth
+  checkpoint: /home/ubuntu/data/zhengqinxu/object_detection/Deep-MIST/results/DCPNet_MIST/20260916_165824/checkpoints/model_epoch_36.pth
